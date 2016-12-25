@@ -1,0 +1,50 @@
+require 'rmagick'
+# list directory
+Dir.foreach(".") do |d|
+  next if !File.directory?(d)
+  next if d=="."
+  next if d==".."
+  Dir.chdir(d)
+  puts "directory name - " + d
+  #renamer
+Dir["**/*"].each {|r| File.rename(r, r.downcase)}
+  #clean up
+  #transver in to each directory
+  pics = Dir.glob('*.jpg')
+  #puts (pics)
+  pic_count = pics.size
+  pic_random = pics.shuffle
+  puts "Total Pic Count " + (pic_count).to_s
+#  puts (pic_random)
+  puts "Directory Load Compete - Current Time " + Time.now.to_s
+  remove = pic_count - 300
+  remove.times do
+    File.delete(pic_random[0])
+    pic_random.delete_at(0)
+  end
+
+
+#  Dir.mkdir("thumbnails")
+  Dir.mkdir("photos")
+
+  pic_random.each_with_index do |f,i|
+    name = "%.3d.jpg" % (i+1)
+
+#image magic read into IM
+    image = Magick::Image.read(f).first
+    image.auto_orient!
+#resize full size
+    image.resize_to_fit!(2000,3000)
+    image.write("photos/"+name) { self.quality = 90 }
+#resize thumbs
+#   image.resize_to_fit!(300,400)
+#   image.unsharp_mask(radius=1.0, sigma=1.0, amount=3.0, threshold=0.05)
+#   image.write("thumbnails/"+name) { self.quality = 75 }
+#delete file
+    File.delete f
+#    File.delete('thumbs.db')
+  end
+  ##create photos
+  puts "Jpg Processing Compete - Current Time : " + Time.now.to_s + "\n\n"
+  Dir.chdir("..")
+end
