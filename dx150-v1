@@ -1,4 +1,4 @@
-5-require 'rmagick'
+require 'rmagick'
 # list directory
 Dir.foreach(".") do |d|
   next if !File.directory?(d)
@@ -23,28 +23,31 @@ Dir["**/*"].each {|r| File.rename(r, r.downcase)}
     pic_random.delete_at(0)
   end
 
+#
 
 
 #  Dir.mkdir("thumbnails")
   Dir.mkdir("photos")
   pics = Dir.glob('*.jpg')
-
-  pics.each_with_index do |f,i|
-    name = "%.3d.jpg" % (i+1)
+  
+puts "resizing images"
+  pics.each do |f|
+  #  name = "%.3d.jpg" % (f+1)
 
 #image magic read into IM
     image = Magick::Image.read(f).first
     image.auto_orient!
 #resize full size
     image.resize_to_fit!(2000,3300)
-    image.write("photos/"+name) { self.quality = 90 }
+    image.write("photos/"+f) { self.quality = 90 }
     image.destroy!
 #resize thumbs
 #   image.resize_to_fit!(300,400)
 #   image.unsharp_mask(radius=1.0, sigma=1.0, amount=3.0, threshold=0.05)
 #   image.write("thumbnails/"+name) { self.quality = 75 }
 #delete file
-    File.delete f
+  puts "delete source files"
+   File.delete f
 #    File.delete('thumbs.db')
   end
   ##create photos
